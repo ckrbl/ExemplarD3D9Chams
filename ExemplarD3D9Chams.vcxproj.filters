@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\include">
+      <UniqueIdentifier>{ba088b81-8d64-4a5b-ab95-7c37fe69392e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\D3DDeviceCreate.cpp">
@@ -26,11 +29,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\D3DDeviceCreate.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\D3DDeviceCreate.h">
+      <Filter>Header Files\include</Filter>
     </ClInclude>
-    <ClInclude Include="src\X86Hook.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\X86Hook.h">
+      <Filter>Header Files\include</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
