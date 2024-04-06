@@ -7,68 +7,66 @@
 #pragma comment(lib, "d3d9.lib")
 #pragma comment(lib, "d3dx9.lib")
 
-HWND g_ProcessWindow;
-
-BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam)
+LRESULT CALLBACK MsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    DWORD wndProcId;
-    GetWindowThreadProcessId(handle, &wndProcId);
-
-    if (GetCurrentProcessId() != wndProcId)
-        return TRUE;  // skip to next window
-
-    g_ProcessWindow = handle;
-    return FALSE;  // window found abort search
+    return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-HWND GetProcessWindow()
+bool GetD3D9Device(void** pTable, size_t tableSize)
 {
-    g_ProcessWindow = NULL;
-    EnumWindows(EnumWindowsCallback, NULL);
-    return g_ProcessWindow;
-}
-
-bool GetD3D9Device(void** pTable, size_t Size)
-{
-    if (!pTable)
-        return false;
-
-    IDirect3D9* pD3D = Direct3DCreate9(D3D_SDK_VERSION);
-
-    if (!pD3D)
-        return false;
-
+    bool bRet = false;
+    D3DPRESENT_PARAMETERS d3dpp = {0};
     IDirect3DDevice9* pDummyDevice = NULL;
+    HRESULT hrCreateDevice;
+    HWND hWnd;
+    IDirect3D9* pD3D;
+    WNDCLASSEX wc = {
+        sizeof(WNDCLASSEX), CS_CLASSDC, MsgProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, "DX", NULL};
 
-    // options to create dummy device
-    D3DPRESENT_PARAMETERS presentParams = {};
-    presentParams.Windowed = false;
-    presentParams.SwapEffect = D3DSWAPEFFECT_DISCARD;
-    presentParams.hDeviceWindow = GetProcessWindow();
-
-    HRESULT dummyDeviceCreated = pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, presentParams.hDeviceWindow,
-                                                    D3DCREATE_SOFTWARE_VERTEXPROCESSING, &presentParams, &pDummyDevice);
-
-    if (dummyDeviceCreated != S_OK)
+    if (!pTable)
     {
-        // may fail in windowed fullscreen mode, trying again with windowed mode
-        presentParams.Windowed = true;
-
-        dummyDeviceCreated = pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, presentParams.hDeviceWindow,
-                                                D3DCREATE_SOFTWARE_VERTEXPROCESSING, &presentParams, &pDummyDevice);
-
-        if (dummyDeviceCreated != S_OK)
-        {
-            pD3D->Release();
-            return false;
-        }
+        MessageBox(nullptr, "Error arguments", "err", MB_OK);
+        goto error_exit;
     }
 
-    memcpy(pTable, *reinterpret_cast<void***>(pDummyDevice), Size);
+    (void)RegisterClassEx(&wc);
+    hWnd =
+        CreateWindow("DX", NULL, WS_OVERLAPPEDWINDOW, 100, 100, 300, 300, GetDesktopWindow(), NULL, wc.hInstance, NULL);
+    if (!hWnd)
+    {
+        MessageBox(nullptr, "CreateWindow failed", "err", MB_OK);
+        goto error_exit;
+    }
+
+    pD3D = Direct3DCreate9(D3D_SDK_VERSION);
+    if (!pD3D)
+    {
+        MessageBox(nullptr, "Direct3DCreate9 failed", "err", MB_OK);
+        goto cleanup_destroy_window;
+    }
+
+    d3dpp.Windowed = true;
+    d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+    d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
+
+    hrCreateDevice = pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING,
+                                        &d3dpp, &pDummyDevice);
+    if (hrCreateDevice != S_OK)
+    {
+        MessageBox(nullptr, "CreateDevice failed", "err", MB_OK);
+        goto cleanup_free_pd3d;
+    }
+
+    memcpy(pTable, *reinterpret_cast<void***>(pDummyDevice), tableSize);
+    bRet = true;
 
     pDummyDevice->Release();
+cleanup_free_pd3d:
     pD3D->Release();
-    return true;
+cleanup_destroy_window:
+    DestroyWindow(hWnd);
+error_exit:
+    return bRet;
 }
 
 DWORD WINAPI Init(LPVOID lpThreadParameter)
@@ -77,6 +75,7 @@ DWORD WINAPI Init(LPVOID lpThreadParameter)
     if (!GetD3D9Device(d3d9Device, sizeof(d3d9Device)))
     {
         MessageBox(nullptr, "GetD3D9Device failed", "err", MB_OK);
+        return -1;
     }
 
     return 0;
