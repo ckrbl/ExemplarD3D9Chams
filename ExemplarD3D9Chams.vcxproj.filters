@@ -15,15 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp">
+    <ClCompile Include="src\D3DDeviceCreate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="D3DDeviceCreate.cpp">
+    <ClCompile Include="src\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="D3DDeviceCreate.h">
+    <ClInclude Include="src\D3DDeviceCreate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
