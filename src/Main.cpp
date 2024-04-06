@@ -2,8 +2,6 @@
 #include <d3d9.h>
 #include <windows.h>
 
-#include <string>
-
 #include "D3D9Hook.h"
 #include "D3DDeviceCreate.h"
 

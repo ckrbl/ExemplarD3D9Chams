@@ -20,7 +20,7 @@ bool PatchVictim(BYTE* victim, BYTE* newFunction)
     memset(victim, 0x90, STOLEN_BYTES_LEN);
     // Jump is relative to PC.. currently start of "victim" function + 5, so we calculate a relative jump to newFunction
     // as follows:
-    relativeOffset = (uintptr_t)(newFunction - victim - 5);
+    relativeOffset = (uintptr_t)((newFunction - victim) - 5);
 
     // Overwrite first character with E9 (x86 for JMP)
     *victim = (BYTE)0xE9;
@@ -38,7 +38,8 @@ bool PatchVictim(BYTE* victim, BYTE* newFunction)
 
 BYTE* HookWithTrampoline(BYTE* victim, BYTE* newFunction)
 {
-#define TRAMPOLINE_LEN ((STOLEN_BYTES_LEN) + 5)
+#define X86_JUMP_SIZE 5
+#define TRAMPOLINE_LEN ((STOLEN_BYTES_LEN) + (X86_JUMP_SIZE))
 
     // Store the original STOLEN_BYTES_LEN bytes in "trampoline", plus a jump back to victim+STOLEN_BYTES_LEN
     uintptr_t relativeOffset;
@@ -54,7 +55,7 @@ BYTE* HookWithTrampoline(BYTE* victim, BYTE* newFunction)
     // Jump from the end of the trampoline back to the original function
     // Jump is relative to PC.. currently at lpTrampoline + 5, so we calculate a relative jump to "victim + 0" as
     // follows:
-    relativeOffset = (uintptr_t)(victim - lpTrampoline - 5);
+    relativeOffset = (uintptr_t)((victim - lpTrampoline) - 5);
 
     // Insert E9 (x86 for JMP)
     *(&lpTrampoline[STOLEN_BYTES_LEN]) = (BYTE)0xE9;
@@ -72,4 +73,5 @@ BYTE* HookWithTrampoline(BYTE* victim, BYTE* newFunction)
     return lpTrampoline;
 
 #undef TRAMPOLINE_LEN
+#undef X86_JUMP_SIZE
 }
