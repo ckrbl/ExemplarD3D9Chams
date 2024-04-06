@@ -1,9 +1,11 @@
 #include <D3dx9core.h>
 #include <d3d9.h>
 #include <windows.h>
+
 #include <string>
 
 #include "D3DDeviceCreate.h"
+#include "X86Hook.h"
 
 #pragma comment(lib, "d3d9.lib")
 #pragma comment(lib, "d3dx9.lib")
