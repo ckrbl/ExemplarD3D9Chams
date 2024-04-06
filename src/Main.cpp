@@ -4,18 +4,24 @@
 
 #include <string>
 
+#include "D3D9Hook.h"
 #include "D3DDeviceCreate.h"
-#include "X86Hook.h"
 
 #pragma comment(lib, "d3d9.lib")
 #pragma comment(lib, "d3dx9.lib")
 
 DWORD WINAPI Init(LPVOID lpThreadParameter)
 {
-    void* d3d9Device[119];
+    void* d3d9Device[D3D9_VTABLE_SIZE];
     if (!GetD3D9Device(d3d9Device, sizeof(d3d9Device)))
     {
         MessageBox(nullptr, "GetD3D9Device failed", nullptr, MB_OK);
+        return -1;
+    }
+
+    if (!InitD3D9Hook(d3d9Device))
+    {
+        MessageBox(nullptr, "InitD3D9Hook failed", nullptr, MB_OK);
         return -1;
     }
 
