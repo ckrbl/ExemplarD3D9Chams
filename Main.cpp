@@ -25,7 +25,7 @@ bool GetD3D9Device(void** pTable, size_t tableSize)
 
     if (!pTable)
     {
-        MessageBox(nullptr, "Error arguments", "err", MB_OK);
+        MessageBox(nullptr, "Error arguments", nullptr, MB_OK);
         goto error_exit;
     }
 
@@ -34,14 +34,14 @@ bool GetD3D9Device(void** pTable, size_t tableSize)
         CreateWindow("DX", NULL, WS_OVERLAPPEDWINDOW, 100, 100, 300, 300, GetDesktopWindow(), NULL, wc.hInstance, NULL);
     if (!hWnd)
     {
-        MessageBox(nullptr, "CreateWindow failed", "err", MB_OK);
+        MessageBox(nullptr, "CreateWindow failed", nullptr, MB_OK);
         goto error_exit;
     }
 
     pD3D = Direct3DCreate9(D3D_SDK_VERSION);
     if (!pD3D)
     {
-        MessageBox(nullptr, "Direct3DCreate9 failed", "err", MB_OK);
+        MessageBox(nullptr, "Direct3DCreate9 failed", nullptr, MB_OK);
         goto cleanup_destroy_window;
     }
 
@@ -53,7 +53,7 @@ bool GetD3D9Device(void** pTable, size_t tableSize)
                                         &d3dpp, &pDummyDevice);
     if (hrCreateDevice != S_OK)
     {
-        MessageBox(nullptr, "CreateDevice failed", "err", MB_OK);
+        MessageBox(nullptr, "CreateDevice failed", nullptr, MB_OK);
         goto cleanup_free_pd3d;
     }
 
@@ -74,7 +74,7 @@ DWORD WINAPI Init(LPVOID lpThreadParameter)
     void* d3d9Device[119];
     if (!GetD3D9Device(d3d9Device, sizeof(d3d9Device)))
     {
-        MessageBox(nullptr, "GetD3D9Device failed", "err", MB_OK);
+        MessageBox(nullptr, "GetD3D9Device failed", nullptr, MB_OK);
         return -1;
     }
 
