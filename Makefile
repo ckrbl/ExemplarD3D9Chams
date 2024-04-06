@@ -3,4 +3,4 @@ all:
 	echo "Nothing here"
 
 format:
-	clang-format -i src/*.cpp
+	clang-format -i include/*.h src/*.cpp
