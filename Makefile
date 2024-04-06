@@ -6,7 +6,7 @@ format:
 	@clang-format -i include/*.h src/*.cpp
 
 package:
-	git archive --format=tar.gz -o Release/ExemplarD3D9Chams.zip main
+	git archive --format=tar.gz -o Release/ExemplarD3D9Chams.tar.gz main
 	git archive --format=zip -o Release/ExemplarD3D9Chams.zip main
 
 clean:
