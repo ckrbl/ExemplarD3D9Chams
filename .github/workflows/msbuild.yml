@@ -61,13 +61,4 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
-      run:    |
-              echo "Printing working directory:"
-              pwd
-              echo "Printing HOME Variable:"
-              dir $HOME
-              echo "Printing HOME/Cache"
-              dir $HOME/cache
-              set DXSDK_DIR=${{env.DXSDK_DIR}}
-              echo "This is the DXSDK_DIR=$DXSDK_DIR environment variable"
-              msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=${{env.BUILD_PLATFORM}} /p:DXSDK_DIR=${{env.DXSDK_DIR}} ${{env.SOLUTION_FILE_PATH}}
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=${{env.BUILD_PLATFORM}} /p:DXSDK_DIR=${{env.DXSDK_DIR}} ${{env.SOLUTION_FILE_PATH}}
