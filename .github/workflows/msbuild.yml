@@ -18,7 +18,9 @@ env:
   # Configuration type to build.
   # You can convert this to a build matrix if you need coverage of multiple configuration types.
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-  BUILD_CONFIGURATION: "Release Win32"
+  BUILD_CONFIGURATION: Release
+  BUILD_PLATFORM: x86
+  DXSDK_DIR: $HOME/cache/
 
 permissions:
   contents: read
@@ -30,28 +32,26 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set env
-      run: echo "DXSDK_DIR=$HOME/cache/" >> $GITHUB_ENV
-
     - name: Cache
-      id:   cache
-      uses: actions/cache@v1
+      id:   my-cache
+      uses: actions/cache@v4
       with:
        path: ~/cache
-       key:  cache
+       key:  my-cache
 
     - name:  Cache create
-      if:    steps.cache.outputs.cache-hit != 'true'
+      if:    steps.my-cache.outputs.cache-hit != 'true'
       run:   |
              curl -L https://download.microsoft.com/download/a/e/7/ae743f1f-632b-4809-87a9-aa1bb3458e31/DXSDK_Jun10.exe -o _DX2010_.exe
              7z x _DX2010_.exe DXSDK/Include -o_DX2010_
              7z x _DX2010_.exe DXSDK/Lib/x86 -o_DX2010_
              mv _DX2010_/DXSDK $HOME/cache
              rm -fR _DX*_ _DX*_.exe
+             ls -la $HOME/cache
       shell: bash
 
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1.0.2
+      uses: microsoft/setup-msbuild@v2
 
     - name: Restore NuGet packages
       working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -61,4 +61,11 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
-      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=${{env.BUILD_PLATFORM}} /p:DXSDK_DIR=${{env.DXSDK_DIR}} ${{env.SOLUTION_FILE_PATH}}
+
+    - name: 'Upload Artifact'
+      uses: actions/upload-artifact@v4
+      with:
+        name: my-artifact
+        path: Release\ExemplarD3D9Chams.dll
+        retention-days: 5
