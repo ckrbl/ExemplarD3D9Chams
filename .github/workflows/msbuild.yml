@@ -20,6 +20,7 @@ env:
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
   BUILD_PLATFORM: x86
+  DXSDK_DIR: $HOME/cache/
 
 permissions:
   contents: read
@@ -30,9 +31,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-
-    - name: Set env
-      run: echo "DXSDK_DIR=$HOME/cache/" >> $GITHUB_ENV
 
     - name: Cache
       id:   cache
