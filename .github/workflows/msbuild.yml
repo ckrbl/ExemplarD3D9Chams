@@ -69,5 +69,6 @@ jobs:
               dir $HOME
               echo "Printing HOME/Cache"
               dir $HOME/cache
+              set DXSDK_DIR=${{env.DXSDK_DIR}}
               echo "This is the DXSDK_DIR=$DXSDK_DIR environment variable"
               msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=${{env.BUILD_PLATFORM}} ${{env.SOLUTION_FILE_PATH}}
