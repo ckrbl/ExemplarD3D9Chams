@@ -20,14 +20,13 @@ env:
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
   BUILD_PLATFORM: x86
+  DXSDK_DIR: $HOME/cache/
 
 permissions:
   contents: read
 
 jobs:
   build:
-    env:
-        DXSDK_DIR: $HOME/cache/
     runs-on: windows-latest
 
     steps:
@@ -71,4 +70,4 @@ jobs:
               dir $HOME/cache
               set DXSDK_DIR=${{env.DXSDK_DIR}}
               echo "This is the DXSDK_DIR=$DXSDK_DIR environment variable"
-              msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=${{env.BUILD_PLATFORM}} ${{env.SOLUTION_FILE_PATH}}
+              msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=${{env.BUILD_PLATFORM}} /p:DXSDK_DIR=${{env.DXSDK_DIR}} ${{env.SOLUTION_FILE_PATH}}
