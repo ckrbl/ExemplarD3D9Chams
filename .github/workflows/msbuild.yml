@@ -20,13 +20,14 @@ env:
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
   BUILD_PLATFORM: x86
-  DXSDK_DIR: $HOME/cache/
 
 permissions:
   contents: read
 
 jobs:
   build:
+    env:
+        DXSDK_DIR: $HOME/cache/
     runs-on: windows-latest
 
     steps:
@@ -62,7 +63,6 @@ jobs:
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run:    |
-              set DXSDK_DIR=${{env.DXSDK_DIR}}
               echo "start"
               pwd
               echo "stop"
