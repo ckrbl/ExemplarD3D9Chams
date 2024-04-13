@@ -33,14 +33,14 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Cache
-      id:   cache
+      id:   my-cache
       uses: actions/cache@v4
       with:
        path: ~/cache
        key:  cache
 
     - name:  Cache create
-      if:    steps.cache.outputs.cache-hit != 'true'
+      if:    steps.my-cache.outputs.cache-hit != 'true'
       run:   |
              curl -L https://download.microsoft.com/download/a/e/7/ae743f1f-632b-4809-87a9-aa1bb3458e31/DXSDK_Jun10.exe -o _DX2010_.exe
              7z x _DX2010_.exe DXSDK/Include -o_DX2010_
@@ -62,7 +62,11 @@ jobs:
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run:    |
-              dir $HOME/cache
+              echo "%DXSDK_DIR%"
+              echo "start"
+              pwd
+              echo "stop"
+              dir $HOME
               echo "stop"
               dir $HOME/cache
               echo "stop"
