@@ -10,12 +10,14 @@
 
 #pragma comment(lib, "detours.lib")
 
+typedef HRESULT(WINAPI* tReset)(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters);
 typedef HRESULT(APIENTRY* tEndScene)(LPDIRECT3DDEVICE9 pDevice);
 typedef HRESULT(WINAPI* tDrawIndexedPrimitive)(LPDIRECT3DDEVICE9 pDevice, D3DPRIMITIVETYPE Type, INT BaseVertexIndex,
                                                UINT MinIndex, UINT NumVertices, UINT StartIndex, UINT PrimitiveCount);
 typedef HRESULT(WINAPI* tSetStreamSource)(LPDIRECT3DDEVICE9 pDevice, UINT StreamNumber,
                                           IDirect3DVertexBuffer9* pStreamData, UINT OffsetInBytes, UINT Stride);
 
+tReset oReset = nullptr;
 tEndScene oEndScene = nullptr;
 tDrawIndexedPrimitive oDrawIndexedPrimitive = nullptr;
 tSetStreamSource oSetStreamSource = nullptr;
@@ -79,26 +81,43 @@ HRESULT ApplyChams(LPDIRECT3DDEVICE9 pDevice, D3DPRIMITIVETYPE Type, INT BaseVer
     return oDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, primCount);
 }
 
+void PreReset()
+{
+    g_shaderRed->Release();
+    g_shaderYellow->Release();
+    g_bShadersInitialized = false;
+}
+
+void PostReset(LPDIRECT3DDEVICE9 pDevice)
+{
+    if (!CreateShader(pDevice, &g_shaderRed, 1.0f, 0.0f, 0.0f, 1.0f))
+    {
+        // Message printed in CreateShader
+        return;
+    }
+
+    if (!CreateShader(pDevice, &g_shaderYellow, 1.0f, 1.0f, 0.0f, 1.0f))
+    {
+        // Message printed in CreateShader
+        return;
+    }
+
+    g_bShadersInitialized = true;
+}
+
+HRESULT WINAPI xReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters)
+{
+    PreReset();
+    return oReset(pDevice, pPresentationParameters);
+}
+
 HRESULT APIENTRY xEndScene(LPDIRECT3DDEVICE9 pDevice)
 {
     if (!g_bShadersInitialized)
     {
-        if (!CreateShader(pDevice, &g_shaderRed, 1.0f, 0.0f, 0.0f, 1.0f))
-        {
-            // Message printed in CreateShader
-            goto end;
-        }
-
-        if (!CreateShader(pDevice, &g_shaderYellow, 1.0f, 1.0f, 0.0f, 1.0f))
-        {
-            // Message printed in CreateShader
-            goto end;
-        }
-
-        g_bShadersInitialized = true;
+        PostReset(pDevice);
     }
 
-end:
     return oEndScene(pDevice);
 }
 
@@ -127,6 +146,7 @@ HRESULT WINAPI xSetStreamSource(LPDIRECT3DDEVICE9 pDevice, UINT StreamNumber, ID
 
 bool InitD3D9Hook(void* d3d9Device[D3D9_VTABLE_SIZE])
 {
+#define RESET_VTABLE_IDX 16
 #define ENDSCENE_VTABLE_IDX 42
 #define DRAW_INDEXED_PRIMITIVE_VTABLE_IDX 82
 #define SET_STREAM_SOURCE_VTABLE_IDX 100
@@ -142,6 +162,13 @@ bool InitD3D9Hook(void* d3d9Device[D3D9_VTABLE_SIZE])
     if (DetourUpdateThread(GetCurrentThread()) != NO_ERROR)
     {
         MessageBox(nullptr, "DetourTransactionBegin failed", nullptr, MB_OK);
+        goto decide;
+    }
+
+    oReset = (tReset)(d3d9Device[RESET_VTABLE_IDX]);
+    if (DetourAttach(&(LPVOID&)oReset, xReset) != NO_ERROR)
+    {
+        MessageBox(nullptr, "DetourAttach failed", nullptr, MB_OK);
         goto decide;
     }
 
@@ -193,4 +220,5 @@ exit:
 #undef SET_STREAM_SOURCE_VTABLE_IDX
 #undef DRAW_INDEXED_PRIMITIVE_VTABLE_IDX
 #undef ENDSCENE_VTABLE_IDX
+#undef RESET_VTABLE_IDX
 }
