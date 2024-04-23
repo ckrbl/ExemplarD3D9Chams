@@ -21,9 +21,6 @@
     <ClCompile Include="src\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\X86Hook.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\D3D9Hook.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -32,10 +29,13 @@
     <ClInclude Include="include\D3DDeviceCreate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\X86Hook.h">
+    <ClInclude Include="include\D3D9Hook.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\D3D9Hook.h">
+    <ClInclude Include="msdetours\include\detours.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="msdetours\include\detver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
