@@ -148,6 +148,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\D3D9Hook.cpp" />
+    <ClCompile Include="src\D3D9Mechanics.cpp" />
     <ClCompile Include="src\D3DDeviceCreate.cpp" />
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
