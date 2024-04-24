@@ -83,6 +83,11 @@ HRESULT ApplyChams(LPDIRECT3DDEVICE9 pDevice, D3DPRIMITIVETYPE Type, INT BaseVer
 
 void PreReset()
 {
+    if (!g_bShadersInitialized)
+    {
+        return;
+    }
+
     g_shaderRed->Release();
     g_shaderYellow->Release();
     g_bShadersInitialized = false;
