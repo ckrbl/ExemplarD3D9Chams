@@ -20,12 +20,6 @@ bool GetD3D9Device(void** pTable, size_t tableSize)
     WNDCLASSEX wc = {
         sizeof(WNDCLASSEX), CS_CLASSDC, MsgProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, "DX", NULL};
 
-    if (!pTable)
-    {
-        MessageBox(nullptr, "Error arguments", nullptr, MB_OK);
-        goto error_exit;
-    }
-
     (void)RegisterClassEx(&wc);
     hWnd =
         CreateWindow("DX", NULL, WS_OVERLAPPEDWINDOW, 100, 100, 300, 300, GetDesktopWindow(), NULL, wc.hInstance, NULL);
