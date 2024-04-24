@@ -11,25 +11,24 @@ tSetStreamSource oSetStreamSource = nullptr;
 bool g_bShadersInitialized = false;
 UINT g_uiStride = 0;
 
-IDirect3DPixelShader9* g_shaderRed;
-IDirect3DPixelShader9* g_shaderYellow;
+ShaderAndBuffer g_shaderRed;
+ShaderAndBuffer g_shaderYellow;
 
-bool CreateShader(IDirect3DDevice9* Device, IDirect3DPixelShader9** Shader, float Red, float Green, float Blue,
+bool CreateShader(IDirect3DDevice9* Device, ShaderAndBuffer& Shader, float Red, float Green, float Blue,
                   float Alpha)
 {
     char Buffer[128];
     HRESULT hr;
-    ID3DXBuffer* ShaderBuffer;
 
     sprintf_s(Buffer, "ps.1.1\ndef c0, %f, %f, %f, %f\nmov r0, c0", Red, Green, Blue, Alpha);
-    hr = D3DXAssembleShader(Buffer, sizeof(Buffer), 0, 0, 0, &ShaderBuffer, 0);
+    hr = D3DXAssembleShader(Buffer, sizeof(Buffer), 0, 0, 0, &Shader.dxBuffer, 0);
     if (hr != D3D_OK)
     {
         MessageBox(nullptr, "D3DXAssembleShader failed", nullptr, MB_OK);
         return false;
     }
 
-    hr = Device->CreatePixelShader((const DWORD*)ShaderBuffer->GetBufferPointer(), Shader);
+    hr = Device->CreatePixelShader((const DWORD*)Shader.dxBuffer->GetBufferPointer(), &Shader.pixelShader);
     if (hr != D3D_OK)
     {
         MessageBox(nullptr, "CreatePixelShader failed", nullptr, MB_OK);
@@ -40,8 +39,8 @@ bool CreateShader(IDirect3DDevice9* Device, IDirect3DPixelShader9** Shader, floa
 }
 
 HRESULT ApplyChams(LPDIRECT3DDEVICE9 pDevice, D3DPRIMITIVETYPE Type, INT BaseVertexIndex, UINT MinIndex,
-                   UINT NumVertices, UINT StartIndex, UINT primCount, IDirect3DPixelShader9* shaderHidden,
-                   IDirect3DPixelShader9* shaderShown)
+                   UINT NumVertices, UINT StartIndex, UINT primCount, ShaderAndBuffer& shaderHidden,
+                   ShaderAndBuffer& shaderShown)
 {
     if (!g_bShadersInitialized)
     {
@@ -52,7 +51,7 @@ HRESULT ApplyChams(LPDIRECT3DDEVICE9 pDevice, D3DPRIMITIVETYPE Type, INT BaseVer
     pDevice->SetRenderState(D3DRS_FOGENABLE, D3DZB_FALSE);
     pDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
     pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-    pDevice->SetPixelShader(shaderHidden);
+    pDevice->SetPixelShader(shaderHidden.pixelShader);
 
     // Color the model, render what's hidden
     oDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, primCount);
@@ -61,7 +60,7 @@ HRESULT ApplyChams(LPDIRECT3DDEVICE9 pDevice, D3DPRIMITIVETYPE Type, INT BaseVer
     pDevice->SetRenderState(D3DRS_FOGENABLE, D3DZB_FALSE);
     pDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
     pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-    pDevice->SetPixelShader(shaderShown);
+    pDevice->SetPixelShader(shaderShown.pixelShader);
 
     // Set a different color, render what's visible
     return oDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, primCount);
@@ -69,25 +68,31 @@ HRESULT ApplyChams(LPDIRECT3DDEVICE9 pDevice, D3DPRIMITIVETYPE Type, INT BaseVer
 
 void PreReset()
 {
+#define RELEASE_SHADER_AND_BUFFER(x) \
+    x.pixelShader->Release(); \
+    x.dxBuffer->Release();
+
     if (!g_bShadersInitialized)
     {
         return;
     }
 
-    g_shaderRed->Release();
-    g_shaderYellow->Release();
+    RELEASE_SHADER_AND_BUFFER(g_shaderRed);
+    RELEASE_SHADER_AND_BUFFER(g_shaderYellow);
     g_bShadersInitialized = false;
+
+#undef RELEASE_SHADER_AND_BUFFER
 }
 
 void PostReset(LPDIRECT3DDEVICE9 pDevice)
 {
-    if (!CreateShader(pDevice, &g_shaderRed, 1.0f, 0.0f, 0.0f, 1.0f))
+    if (!CreateShader(pDevice, g_shaderRed, 1.0f, 0.0f, 0.0f, 1.0f))
     {
         // Message printed in CreateShader
         return;
     }
 
-    if (!CreateShader(pDevice, &g_shaderYellow, 1.0f, 1.0f, 0.0f, 1.0f))
+    if (!CreateShader(pDevice, g_shaderYellow, 1.0f, 1.0f, 0.0f, 1.0f))
     {
         // Message printed in CreateShader
         return;
