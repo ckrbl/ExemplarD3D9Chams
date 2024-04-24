@@ -6,6 +6,12 @@
 
 #define D3D9_VTABLE_SIZE 119
 
+typedef struct ShaderAndBuffer
+{
+IDirect3DPixelShader9* pixelShader;
+ID3DXBuffer* dxBuffer;
+} ShaderAndBuffer;
+
 typedef HRESULT(WINAPI* tReset)(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters);
 typedef HRESULT(APIENTRY* tEndScene)(LPDIRECT3DDEVICE9 pDevice);
 typedef HRESULT(WINAPI* tDrawIndexedPrimitive)(LPDIRECT3DDEVICE9 pDevice, D3DPRIMITIVETYPE Type, INT BaseVertexIndex,
