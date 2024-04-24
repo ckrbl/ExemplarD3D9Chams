@@ -8,8 +8,8 @@
 
 typedef struct ShaderAndBuffer
 {
-IDirect3DPixelShader9* pixelShader;
-ID3DXBuffer* dxBuffer;
+    IDirect3DPixelShader9* pixelShader;
+    ID3DXBuffer* dxBuffer;
 } ShaderAndBuffer;
 
 typedef HRESULT(WINAPI* tReset)(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters);

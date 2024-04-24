@@ -1,4 +1,5 @@
 #include <Windows.h>
+
 #include <string>
 
 #include "D3D9Hook.h"
@@ -14,8 +15,7 @@ UINT g_uiStride = 0;
 ShaderAndBuffer g_shaderRed;
 ShaderAndBuffer g_shaderYellow;
 
-bool CreateShader(IDirect3DDevice9* Device, ShaderAndBuffer& Shader, float Red, float Green, float Blue,
-                  float Alpha)
+bool CreateShader(IDirect3DDevice9* Device, ShaderAndBuffer& Shader, float Red, float Green, float Blue, float Alpha)
 {
     char Buffer[128];
     HRESULT hr;
@@ -69,7 +69,7 @@ HRESULT ApplyChams(LPDIRECT3DDEVICE9 pDevice, D3DPRIMITIVETYPE Type, INT BaseVer
 void PreReset()
 {
 #define RELEASE_SHADER_AND_BUFFER(x) \
-    x.pixelShader->Release(); \
+    x.pixelShader->Release();        \
     x.dxBuffer->Release();
 
     if (!g_bShadersInitialized)
