@@ -5,7 +5,7 @@ VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExemplarD3D9Chams", "ExemplarD3D9Chams.vcxproj", "{477C73DB-C1C0-443D-8D05-AE3DE103D1C9}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MsDetours", "MsDetours.vcxproj", "{70B999BB-4DAE-46AC-9B6C-0242CB3212EC}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Detours", "Detours.vcxproj", "{70B999BB-4DAE-46AC-9B6C-0242CB3212EC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
