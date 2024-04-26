@@ -61,7 +61,7 @@ jobs:
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
 
     - name: Build1
-      working-directory: ${{env.GITHUB_WORKSPACE}}\detours\src
+      working-directory: ${{env.SOLUTION_FILE_PATH}}\detours\src
       run: |
         nmake
 
