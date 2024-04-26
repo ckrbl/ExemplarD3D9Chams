@@ -63,7 +63,7 @@ jobs:
     - name: Build1
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: |
-        nmake
+        cd src\detours && nmake
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
