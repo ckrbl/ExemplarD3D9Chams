@@ -57,11 +57,10 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
 
-    - uses: ilammy/msvc-dev-cmd@v1
-
     - name: Build Detours
+      uses: ilammy/msvc-dev-cmd@v1
       working-directory: ${{env.GITHUB_WORKSPACE}}\detours\src
-
+      run: nmake.exe /nologo
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
