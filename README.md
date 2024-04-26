@@ -1,5 +1,5 @@
 # Exemplar DriectX 9 Chams
-Simple DirectX 9 chameleon skins cheat for video games
+Simple DirectX 9 chameleon skins cheat for pc games
 
 Currently only 32-bit x86 is supported.
 
