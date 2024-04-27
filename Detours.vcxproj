@@ -65,32 +65,32 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakeBuildCommandLine>cd $(ProjectDir)detours\src &amp;&amp; nmake</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>cd $(ProjectDir)detours\src &amp;&amp; nmake /nologo</NMakeBuildCommandLine>
     <NMakeOutput>
     </NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeCleanCommandLine>cd $(ProjectDir)detours\src &amp;&amp; nmake.exe /nologo realclean</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>cd $(ProjectDir)detours\src &amp;&amp; nmake /nologo realclean</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <NMakeBuildCommandLine>cd $(ProjectDir)detours\src &amp;&amp; nmake</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>cd $(ProjectDir)detours\src &amp;&amp; nmake /nologo</NMakeBuildCommandLine>
     <NMakeOutput>
     </NMakeOutput>
     <NMakePreprocessorDefinitions>_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeCleanCommandLine>cd $(ProjectDir)detours\src &amp;&amp; nmake.exe /nologo realclean</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>cd $(ProjectDir)detours\src &amp;&amp; nmake /nologo realclean</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <NMakeBuildCommandLine>cd $(ProjectDir)detours\src &amp;&amp; nmake</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>cd $(ProjectDir)detours\src &amp;&amp; nmake /nologo</NMakeBuildCommandLine>
     <NMakeOutput>
     </NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeCleanCommandLine>cd $(ProjectDir)detours\src &amp;&amp; nmake.exe /nologo realclean</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>cd $(ProjectDir)detours\src &amp;&amp; nmake /nologo realclean</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <NMakeBuildCommandLine>cd $(ProjectDir)detours\src &amp;&amp; nmake</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>cd $(ProjectDir)detours\src &amp;&amp; nmake /nologo</NMakeBuildCommandLine>
     <NMakeOutput>
     </NMakeOutput>
     <NMakePreprocessorDefinitions>NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeCleanCommandLine>cd $(ProjectDir)detours\src &amp;&amp; nmake.exe /nologo realclean</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>cd $(ProjectDir)detours\src &amp;&amp; nmake /nologo realclean</NMakeCleanCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
