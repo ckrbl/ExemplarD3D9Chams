@@ -4,6 +4,9 @@
 
 #include "D3D9Hook.hpp"
 
+#pragma comment(lib, "d3d9.lib")
+#pragma comment(lib, "d3dx9.lib")
+
 tReset oReset = nullptr;
 tEndScene oEndScene = nullptr;
 tDrawIndexedPrimitive oDrawIndexedPrimitive = nullptr;

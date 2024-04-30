@@ -24,11 +24,11 @@ extern tEndScene oEndScene;
 extern tDrawIndexedPrimitive oDrawIndexedPrimitive;
 extern tSetStreamSource oSetStreamSource;
 
-bool InitD3D9Hook(void* d3d9Device[D3D9_VTABLE_SIZE]);
-
 HRESULT WINAPI xReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters);
 HRESULT APIENTRY xEndScene(LPDIRECT3DDEVICE9 pDevice);
 HRESULT WINAPI xDrawIndexedPrimitive(LPDIRECT3DDEVICE9 pDevice, D3DPRIMITIVETYPE Type, INT BaseVertexIndex,
                                      UINT MinIndex, UINT NumVertices, UINT StartIndex, UINT primCount);
 HRESULT WINAPI xSetStreamSource(LPDIRECT3DDEVICE9 pDevice, UINT StreamNumber, IDirect3DVertexBuffer9* pStreamData,
                                 UINT OffsetInBytes, UINT Stride);
+
+bool InitD3D9Hook(void* d3d9Device[D3D9_VTABLE_SIZE]);

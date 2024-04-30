@@ -1,7 +1,6 @@
 #include "D3DDeviceCreate.hpp"
 
 #include <D3dx9core.h>
-#include <d3d9.h>
 #include <windows.h>
 
 LRESULT CALLBACK MsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
