@@ -1,4 +1,8 @@
 # Exemplar DriectX 9 Chams
+
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/ckrbl/ExemplarD3D9Chams/msbuild.yml)
+![GitHub License](https://img.shields.io/github/license/ckrbl/ExemplarD3D9Chams)
+
 Simple DirectX 9 chameleon skins cheat for pc games
 
 Currently only 32-bit x86 is supported.
