@@ -1,4 +1,4 @@
-#include "D3D9Hook.h"
+#include "D3D9Hook.hpp"
 #include "detours.h"
 
 #pragma comment(lib, "detours.lib")
