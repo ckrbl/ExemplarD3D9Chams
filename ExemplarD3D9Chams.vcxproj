@@ -153,13 +153,13 @@
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\D3D9Hook.h" />
-    <ClInclude Include="include\D3DDeviceCreate.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="Detours.vcxproj">
       <Project>{70b999bb-4dae-46ac-9b6c-0242cb3212ec}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\D3D9Hook.hpp" />
+    <ClInclude Include="include\D3DDeviceCreate.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

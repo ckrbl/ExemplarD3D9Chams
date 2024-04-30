@@ -2,8 +2,8 @@
 #include <d3d9.h>
 #include <windows.h>
 
-#include "D3D9Hook.h"
-#include "D3DDeviceCreate.h"
+#include "D3D9Hook.hpp"
+#include "D3DDeviceCreate.hpp"
 
 #pragma comment(lib, "d3d9.lib")
 #pragma comment(lib, "d3dx9.lib")

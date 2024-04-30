@@ -29,10 +29,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\D3DDeviceCreate.h">
+    <ClInclude Include="include\D3D9Hook.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\D3D9Hook.h">
+    <ClInclude Include="include\D3DDeviceCreate.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

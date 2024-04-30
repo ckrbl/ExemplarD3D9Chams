@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "D3D9Hook.h"
+#include "D3D9Hook.hpp"
 
 tReset oReset = nullptr;
 tEndScene oEndScene = nullptr;
