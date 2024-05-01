@@ -8,7 +8,7 @@ LRESULT CALLBACK MsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-bool CreateDeviceD3DCopyTable(HWND hWnd, void** pTable, size_t tableSize)
+static inline bool CreateDeviceD3DCopyTable(HWND hWnd, void** pTable, size_t tableSize)
 {
     bool bRet = false;
     IDirect3DDevice9* pDummyDevice = nullptr;
@@ -77,7 +77,7 @@ bool GetD3D9Device(void** pTable, size_t tableSize)
 
     if (!CreateDeviceD3DCopyTable(hWnd, pTable, tableSize))
     {
-        // Message already printed
+        // Message printed in CreateDeviceD3DCopyTable
         goto cleanup_destroy_window;
     }
 
