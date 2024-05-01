@@ -10,6 +10,14 @@ bool InitD3D9Hook(void* d3d9Device[D3D9_VTABLE_SIZE])
 #define DRAW_INDEXED_PRIMITIVE_VTABLE_IDX 82
 #define SET_STREAM_SOURCE_VTABLE_IDX 100
 
+#define DETOUR_ATTACH(NAME, TABLE_IDX)                              \
+    o##NAME = (t##NAME)(d3d9Device[TABLE_IDX]);                     \
+    if (DetourAttach(&(LPVOID&)o##NAME, x##NAME) != NO_ERROR)       \
+    {                                                               \
+        MessageBox(nullptr, "DetourAttach failed", nullptr, MB_OK); \
+        goto decide;                                                \
+    }
+
     bool status = false;
 
     if (DetourTransactionBegin() != NO_ERROR)
@@ -24,33 +32,10 @@ bool InitD3D9Hook(void* d3d9Device[D3D9_VTABLE_SIZE])
         goto decide;
     }
 
-    oReset = (tReset)(d3d9Device[RESET_VTABLE_IDX]);
-    if (DetourAttach(&(LPVOID&)oReset, xReset) != NO_ERROR)
-    {
-        MessageBox(nullptr, "DetourAttach failed", nullptr, MB_OK);
-        goto decide;
-    }
-
-    oEndScene = (tEndScene)(d3d9Device[ENDSCENE_VTABLE_IDX]);
-    if (DetourAttach(&(LPVOID&)oEndScene, xEndScene) != NO_ERROR)
-    {
-        MessageBox(nullptr, "DetourAttach failed", nullptr, MB_OK);
-        goto decide;
-    }
-
-    oDrawIndexedPrimitive = (tDrawIndexedPrimitive)(d3d9Device[DRAW_INDEXED_PRIMITIVE_VTABLE_IDX]);
-    if (DetourAttach(&(LPVOID&)oDrawIndexedPrimitive, xDrawIndexedPrimitive) != NO_ERROR)
-    {
-        MessageBox(nullptr, "DetourAttach failed", nullptr, MB_OK);
-        goto decide;
-    }
-
-    oSetStreamSource = (tSetStreamSource)(d3d9Device[SET_STREAM_SOURCE_VTABLE_IDX]);
-    if (DetourAttach(&(LPVOID&)oSetStreamSource, xSetStreamSource) != NO_ERROR)
-    {
-        MessageBox(nullptr, "DetourAttach failed", nullptr, MB_OK);
-        goto decide;
-    }
+    DETOUR_ATTACH(Reset, RESET_VTABLE_IDX)
+    DETOUR_ATTACH(EndScene, ENDSCENE_VTABLE_IDX)
+    DETOUR_ATTACH(DrawIndexedPrimitive, DRAW_INDEXED_PRIMITIVE_VTABLE_IDX)
+    DETOUR_ATTACH(SetStreamSource, SET_STREAM_SOURCE_VTABLE_IDX)
 
     status = true;
 
@@ -75,6 +60,8 @@ decide:
 
 exit:
     return status;
+
+#undef DETOUR_ATTACH
 
 #undef SET_STREAM_SOURCE_VTABLE_IDX
 #undef DRAW_INDEXED_PRIMITIVE_VTABLE_IDX
