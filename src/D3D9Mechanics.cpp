@@ -18,7 +18,8 @@ UINT g_uiStride = 0;
 ShaderAndBuffer g_shaderRed;
 ShaderAndBuffer g_shaderYellow;
 
-bool CreateShader(IDirect3DDevice9* Device, ShaderAndBuffer& Shader, float Red, float Green, float Blue, float Alpha)
+static inline bool CreateShader(IDirect3DDevice9* Device, ShaderAndBuffer& Shader, float Red, float Green, float Blue,
+                                float Alpha)
 {
     char Buffer[128];
     HRESULT hr;
@@ -41,9 +42,9 @@ bool CreateShader(IDirect3DDevice9* Device, ShaderAndBuffer& Shader, float Red, 
     return true;
 }
 
-HRESULT ApplyChams(LPDIRECT3DDEVICE9 pDevice, D3DPRIMITIVETYPE Type, INT BaseVertexIndex, UINT MinIndex,
-                   UINT NumVertices, UINT StartIndex, UINT primCount, ShaderAndBuffer& shaderHidden,
-                   ShaderAndBuffer& shaderShown)
+static inline HRESULT ApplyChams(LPDIRECT3DDEVICE9 pDevice, D3DPRIMITIVETYPE Type, INT BaseVertexIndex, UINT MinIndex,
+                                 UINT NumVertices, UINT StartIndex, UINT primCount, ShaderAndBuffer& shaderHidden,
+                                 ShaderAndBuffer& shaderShown)
 {
     if (!g_bShadersInitialized)
     {
