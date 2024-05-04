@@ -7,44 +7,64 @@
 #pragma comment(lib, "d3d9.lib")
 #pragma comment(lib, "d3dx9.lib")
 
+tAddRef oAddRef = nullptr;
+tRelease oRelease = nullptr;
 tReset oReset = nullptr;
 tEndScene oEndScene = nullptr;
 tDrawIndexedPrimitive oDrawIndexedPrimitive = nullptr;
 tSetStreamSource oSetStreamSource = nullptr;
 
+IDirect3DDevice9* g_pGameDevice = nullptr;
+ULONG g_ulGameRefCount = 0;
+ULONG g_ulMyAllocatedObjectsCount = 0;
 bool g_bShadersInitialized = false;
 UINT g_uiStride = 0;
+bool g_bShutdownStarted = false;
 
-ShaderAndBuffer g_shaderRed;
-ShaderAndBuffer g_shaderYellow;
+IDirect3DPixelShader9* g_shaderRed;
+IDirect3DPixelShader9* g_shaderYellow;
 
-static inline bool CreateShader(IDirect3DDevice9* Device, ShaderAndBuffer& Shader, float Red, float Green, float Blue,
-                                float Alpha)
+static inline bool CreateShader(IDirect3DDevice9* Device, IDirect3DPixelShader9** Shader, float Red, float Green,
+                                float Blue, float Alpha)
 {
-    char Buffer[128];
+    char cBuffer[128];
+    ID3DXBuffer* pShaderBuffer = NULL;
     HRESULT hr;
 
-    sprintf_s(Buffer, "ps.1.1\ndef c0, %f, %f, %f, %f\nmov r0, c0", Red, Green, Blue, Alpha);
-    hr = D3DXAssembleShader(Buffer, sizeof(Buffer), 0, 0, 0, &Shader.dxBuffer, 0);
+    sprintf_s(cBuffer, "ps.1.1\ndef c0, %f, %f, %f, %f\nmov r0, c0", Red, Green, Blue, Alpha);
+    hr = D3DXAssembleShader(cBuffer, sizeof(cBuffer), 0, 0, 0, &pShaderBuffer, 0);
     if (hr != D3D_OK)
     {
         MessageBox(nullptr, "D3DXAssembleShader failed", nullptr, MB_OK);
         return false;
     }
 
-    hr = Device->CreatePixelShader((const DWORD*)Shader.dxBuffer->GetBufferPointer(), &Shader.pixelShader);
+    hr = Device->CreatePixelShader((const DWORD*)pShaderBuffer->GetBufferPointer(), Shader);
     if (hr != D3D_OK)
     {
         MessageBox(nullptr, "CreatePixelShader failed", nullptr, MB_OK);
         return false;
     }
 
+    // Calling Device->CreatePixelShader will cause the refcount of the game's Direct3DDevice to increase. We need to
+    // track this
+    g_ulMyAllocatedObjectsCount++;
     return true;
 }
 
+static inline void DestroyShader(IDirect3DPixelShader9* Shader)
+{
+    if (Shader)
+    {
+        g_ulMyAllocatedObjectsCount--;
+    }
+
+    SAFE_RELEASE(Shader);
+}
+
 static inline HRESULT ApplyChams(LPDIRECT3DDEVICE9 pDevice, D3DPRIMITIVETYPE Type, INT BaseVertexIndex, UINT MinIndex,
-                                 UINT NumVertices, UINT StartIndex, UINT primCount, ShaderAndBuffer& shaderHidden,
-                                 ShaderAndBuffer& shaderShown)
+                                 UINT NumVertices, UINT StartIndex, UINT primCount, IDirect3DPixelShader9* shaderHidden,
+                                 IDirect3DPixelShader9* shaderShown)
 {
     if (!g_bShadersInitialized)
     {
@@ -55,7 +75,7 @@ static inline HRESULT ApplyChams(LPDIRECT3DDEVICE9 pDevice, D3DPRIMITIVETYPE Typ
     pDevice->SetRenderState(D3DRS_FOGENABLE, D3DZB_FALSE);
     pDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
     pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-    pDevice->SetPixelShader(shaderHidden.pixelShader);
+    pDevice->SetPixelShader(shaderHidden);
 
     // Color the model, render what's hidden
     oDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, primCount);
@@ -64,60 +84,103 @@ static inline HRESULT ApplyChams(LPDIRECT3DDEVICE9 pDevice, D3DPRIMITIVETYPE Typ
     pDevice->SetRenderState(D3DRS_FOGENABLE, D3DZB_FALSE);
     pDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
     pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-    pDevice->SetPixelShader(shaderShown.pixelShader);
+    pDevice->SetPixelShader(shaderShown);
 
     // Set a different color, render what's visible
     return oDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, primCount);
 }
 
-void PreReset()
+static inline void PreReset()
 {
-#define RELEASE_SHADER_AND_BUFFER(x) \
-    x.pixelShader->Release();        \
-    x.dxBuffer->Release();
-
     if (!g_bShadersInitialized)
     {
         return;
     }
 
-    RELEASE_SHADER_AND_BUFFER(g_shaderRed);
-    RELEASE_SHADER_AND_BUFFER(g_shaderYellow);
+    DestroyShader(g_shaderRed);
+    DestroyShader(g_shaderYellow);
     g_bShadersInitialized = false;
-
-#undef RELEASE_SHADER_AND_BUFFER
 }
 
-void PostReset(LPDIRECT3DDEVICE9 pDevice)
+static inline void PostReset(LPDIRECT3DDEVICE9 pDevice)
 {
-    if (!CreateShader(pDevice, g_shaderRed, 1.0f, 0.0f, 0.0f, 1.0f))
+    g_pGameDevice = pDevice;
+    if (g_bShadersInitialized || g_bShutdownStarted)
+    {
+        return;
+    }
+
+    if (!CreateShader(pDevice, &g_shaderRed, 1.0f, 0.0f, 0.0f, 1.0f))
     {
         // Message printed in CreateShader
         return;
     }
 
-    if (!CreateShader(pDevice, g_shaderYellow, 1.0f, 1.0f, 0.0f, 1.0f))
+    if (!CreateShader(pDevice, &g_shaderYellow, 1.0f, 1.0f, 0.0f, 1.0f))
     {
         // Message printed in CreateShader
+        DestroyShader(g_shaderRed);
         return;
     }
 
+    MemoryBarrier();
     g_bShadersInitialized = true;
 }
+
+void PreShutdown()
+{
+    g_bShutdownStarted = true;
+    MemoryBarrier();
+    PreReset();
+}
+
+#define RECORD_REFCOUNT_AND_RETURN_IT(CALL) \
+    g_ulGameRefCount = CALL(pDevice);       \
+    return g_ulGameRefCount;
+
+ULONG WINAPI xAddRef(LPDIRECT3DDEVICE9 pDevice)
+{
+    // If IUnknown::AddRef is being called for some other object, ignore it
+    if (pDevice != g_pGameDevice)
+    {
+        return oAddRef(pDevice);
+    }
+
+    // Write down what the current refcount is for the game window
+    RECORD_REFCOUNT_AND_RETURN_IT(oAddRef);
+}
+
+ULONG WINAPI xRelease(LPDIRECT3DDEVICE9 pDevice)
+{
+    // If IUnknown::Release is being called for some other object, ignore it
+    if (pDevice != g_pGameDevice)
+    {
+        return oRelease(pDevice);
+    }
+
+    // The object being released IS the game's Direct3DDevice
+    // Check if it will cause the game to close
+    if (((g_ulGameRefCount - g_ulMyAllocatedObjectsCount) - 1) == 0)
+    {
+        PreShutdown();
+    }
+
+    RECORD_REFCOUNT_AND_RETURN_IT(oRelease);
+}
+
+#undef RECORD_REFCOUNT_AND_RETURN_IT
 
 HRESULT WINAPI xReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters)
 {
     PreReset();
-    return oReset(pDevice, pPresentationParameters);
+    HRESULT hrReset = oReset(pDevice, pPresentationParameters);
+    PostReset(pDevice);
+    return hrReset;
 }
 
 HRESULT APIENTRY xEndScene(LPDIRECT3DDEVICE9 pDevice)
 {
-    if (!g_bShadersInitialized)
-    {
-        PostReset(pDevice);
-    }
-
+    PostReset(pDevice);
     return oEndScene(pDevice);
 }
 
