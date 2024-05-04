@@ -21,6 +21,7 @@ DWORD WINAPI Init(LPVOID lpThreadParameter)
     return 0;
 }
 
+
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
 {
     HANDLE hThread;
@@ -38,9 +39,14 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
             }
 
             CloseHandle(hThread);
-        case DLL_THREAD_ATTACH:
-        case DLL_THREAD_DETACH:
+            break;
+
         case DLL_PROCESS_DETACH:
+            if (!ShutdownD3D9Hook())
+            {
+                return FALSE;
+            }
+
             break;
     }
 
