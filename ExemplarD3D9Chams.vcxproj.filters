@@ -21,10 +21,13 @@
     <ClCompile Include="src\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\D3D9Mechanics.cpp">
+    <ClCompile Include="src\D3D9HookInit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\D3D9HookInit.cpp">
+    <ClCompile Include="src\D3D9Chams.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\D3D9RefTracking.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

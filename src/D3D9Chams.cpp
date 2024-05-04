@@ -4,22 +4,13 @@
 
 #include "D3D9Hook.hpp"
 
-#pragma comment(lib, "d3d9.lib")
-#pragma comment(lib, "d3dx9.lib")
+bool g_bShutdownStarted = false;
+bool g_bShadersInitialized = false;
+UINT g_uiStride = 0;
 
-tAddRef oAddRef = nullptr;
-tRelease oRelease = nullptr;
-tReset oReset = nullptr;
 tEndScene oEndScene = nullptr;
 tDrawIndexedPrimitive oDrawIndexedPrimitive = nullptr;
 tSetStreamSource oSetStreamSource = nullptr;
-
-IDirect3DDevice9* g_pGameDevice = nullptr;
-ULONG g_ulGameRefCount = 0;
-ULONG g_ulMyAllocatedObjectsCount = 0;
-bool g_bShadersInitialized = false;
-UINT g_uiStride = 0;
-bool g_bShutdownStarted = false;
 
 IDirect3DPixelShader9* g_shaderRed;
 IDirect3DPixelShader9* g_shaderYellow;
@@ -62,35 +53,7 @@ static inline void DestroyShader(IDirect3DPixelShader9* Shader)
     SAFE_RELEASE(Shader);
 }
 
-static inline HRESULT ApplyChams(LPDIRECT3DDEVICE9 pDevice, D3DPRIMITIVETYPE Type, INT BaseVertexIndex, UINT MinIndex,
-                                 UINT NumVertices, UINT StartIndex, UINT primCount, IDirect3DPixelShader9* shaderHidden,
-                                 IDirect3DPixelShader9* shaderShown)
-{
-    if (!g_bShadersInitialized)
-    {
-        return oDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, primCount);
-    }
-
-    // Disable Fog, depth test
-    pDevice->SetRenderState(D3DRS_FOGENABLE, D3DZB_FALSE);
-    pDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
-    pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-    pDevice->SetPixelShader(shaderHidden);
-
-    // Color the model, render what's hidden
-    oDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, primCount);
-
-    // Reenable depth test, keep fog disabled
-    pDevice->SetRenderState(D3DRS_FOGENABLE, D3DZB_FALSE);
-    pDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
-    pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-    pDevice->SetPixelShader(shaderShown);
-
-    // Set a different color, render what's visible
-    return oDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, primCount);
-}
-
-static inline void PreReset()
+void PreReset()
 {
     if (!g_bShadersInitialized)
     {
@@ -102,7 +65,7 @@ static inline void PreReset()
     g_bShadersInitialized = false;
 }
 
-static inline void PostReset(LPDIRECT3DDEVICE9 pDevice)
+void PostReset(LPDIRECT3DDEVICE9 pDevice)
 {
     g_pGameDevice = pDevice;
     if (g_bShadersInitialized || g_bShutdownStarted)
@@ -134,48 +97,32 @@ void PreShutdown()
     PreReset();
 }
 
-#define RECORD_REFCOUNT_AND_RETURN_IT(CALL) \
-    g_ulGameRefCount = CALL(pDevice);       \
-    return g_ulGameRefCount;
-
-ULONG WINAPI xAddRef(LPDIRECT3DDEVICE9 pDevice)
+static inline HRESULT ApplyChams(LPDIRECT3DDEVICE9 pDevice, D3DPRIMITIVETYPE Type, INT BaseVertexIndex, UINT MinIndex,
+                                 UINT NumVertices, UINT StartIndex, UINT primCount, IDirect3DPixelShader9* shaderHidden,
+                                 IDirect3DPixelShader9* shaderShown)
 {
-    // If IUnknown::AddRef is being called for some other object, ignore it
-    if (pDevice != g_pGameDevice)
+    if (!g_bShadersInitialized)
     {
-        return oAddRef(pDevice);
+        return oDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, primCount);
     }
 
-    // Write down what the current refcount is for the game window
-    RECORD_REFCOUNT_AND_RETURN_IT(oAddRef);
-}
+    // Disable Fog, depth test
+    pDevice->SetRenderState(D3DRS_FOGENABLE, D3DZB_FALSE);
+    pDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+    pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+    pDevice->SetPixelShader(shaderHidden);
 
-ULONG WINAPI xRelease(LPDIRECT3DDEVICE9 pDevice)
-{
-    // If IUnknown::Release is being called for some other object, ignore it
-    if (pDevice != g_pGameDevice)
-    {
-        return oRelease(pDevice);
-    }
+    // Color the model, render what's hidden
+    oDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, primCount);
 
-    // The object being released IS the game's Direct3DDevice
-    // Check if it will cause the game to close
-    if (((g_ulGameRefCount - g_ulMyAllocatedObjectsCount) - 1) == 0)
-    {
-        PreShutdown();
-    }
+    // Reenable depth test, keep fog disabled
+    pDevice->SetRenderState(D3DRS_FOGENABLE, D3DZB_FALSE);
+    pDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
+    pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+    pDevice->SetPixelShader(shaderShown);
 
-    RECORD_REFCOUNT_AND_RETURN_IT(oRelease);
-}
-
-#undef RECORD_REFCOUNT_AND_RETURN_IT
-
-HRESULT WINAPI xReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters)
-{
-    PreReset();
-    HRESULT hrReset = oReset(pDevice, pPresentationParameters);
-    PostReset(pDevice);
-    return hrReset;
+    // Set a different color, render what's visible
+    return oDrawIndexedPrimitive(pDevice, Type, BaseVertexIndex, MinIndex, NumVertices, StartIndex, primCount);
 }
 
 HRESULT APIENTRY xEndScene(LPDIRECT3DDEVICE9 pDevice)

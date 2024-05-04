@@ -28,14 +28,19 @@ typedef HRESULT(WINAPI* tDrawIndexedPrimitive)(LPDIRECT3DDEVICE9 pDevice, D3DPRI
 typedef HRESULT(WINAPI* tSetStreamSource)(LPDIRECT3DDEVICE9 pDevice, UINT StreamNumber,
                                           IDirect3DVertexBuffer9* pStreamData, UINT OffsetInBytes, UINT Stride);
 
-void PreShutdown();
-
 extern tAddRef oAddRef;
 extern tRelease oRelease;
 extern tReset oReset;
 extern tEndScene oEndScene;
 extern tDrawIndexedPrimitive oDrawIndexedPrimitive;
 extern tSetStreamSource oSetStreamSource;
+
+extern IDirect3DDevice9* g_pGameDevice;
+extern ULONG g_ulMyAllocatedObjectsCount;
+extern bool g_bShutdownStarted;
+void PreShutdown();
+inline void PreReset();
+inline void PostReset(LPDIRECT3DDEVICE9 pDevice);
 
 ULONG WINAPI xAddRef(LPDIRECT3DDEVICE9 pDevice);
 ULONG WINAPI xRelease(LPDIRECT3DDEVICE9 pDevice);
