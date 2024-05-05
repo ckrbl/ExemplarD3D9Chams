@@ -1,3 +1,5 @@
+#include "D3D9HookInit.hpp"
+
 #include "D3D9Hook.hpp"
 #include "detours.h"
 

@@ -4,8 +4,6 @@
 #include <Windows.h>
 #include <d3d9.h>
 
-#define D3D9_VTABLE_SIZE 119
-
 #define SAFE_RELEASE(d) \
     if (d)              \
     {                   \
@@ -50,6 +48,3 @@ HRESULT WINAPI xDrawIndexedPrimitive(LPDIRECT3DDEVICE9 pDevice, D3DPRIMITIVETYPE
                                      UINT MinIndex, UINT NumVertices, UINT StartIndex, UINT primCount);
 HRESULT WINAPI xSetStreamSource(LPDIRECT3DDEVICE9 pDevice, UINT StreamNumber, IDirect3DVertexBuffer9* pStreamData,
                                 UINT OffsetInBytes, UINT Stride);
-
-bool InitD3D9Hook(void* d3d9Device[D3D9_VTABLE_SIZE]);
-bool ShutdownD3D9Hook();
