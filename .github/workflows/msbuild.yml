@@ -63,7 +63,7 @@ jobs:
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=${{matrix.platform}} /p:DXSDK_DIR=${{env.DXSDK_DIR}} ExemplarD3D9Chams.vcxproj
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=${{matrix.platform}} /p:DXSDK_DIR=${{env.DXSDK_DIR}} ExemplarD3D9Chams.sln
 
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v4
