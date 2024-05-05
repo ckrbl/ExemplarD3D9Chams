@@ -49,7 +49,6 @@ jobs:
              7z x _DX2010_.exe DXSDK/Lib/x64 -o_DX2010_
              mv _DX2010_/DXSDK $HOME/cache
              rm -fR _DX*_ _DX*_.exe
-             ls -la $HOME/cache
       shell: bash
 
     - name: Add MSBuild to PATH
