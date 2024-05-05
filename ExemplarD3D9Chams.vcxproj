@@ -149,7 +149,7 @@
   <ItemGroup>
     <ClCompile Include="src\D3D9Chams.cpp" />
     <ClCompile Include="src\D3D9RefTracking.cpp" />
-    <ClCompile Include="src\hook_init\D3D9DeviceCreate.cpp" />
+    <ClCompile Include="src\hook_init\D3D9CreateDevice.cpp" />
     <ClCompile Include="src\hook_init\D3D9HookInit.cpp" />
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
