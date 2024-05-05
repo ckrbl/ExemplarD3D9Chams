@@ -1,7 +1,7 @@
-#include "D3D9InitHook.hpp"
-
 #include <D3dx9core.h>
 #include <windows.h>
+
+#include "D3D9InitHook.hpp"
 
 #pragma comment(lib, "d3d9.lib")
 #pragma comment(lib, "d3dx9.lib")
