@@ -15,6 +15,7 @@ env:
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
   DXSDK_DIR: $HOME/cache/
+  PROCESSOR_ARCHITECTURE: ${{matrix.arch}}
 
 permissions:
   contents: read
