@@ -30,7 +30,7 @@
     <ClCompile Include="src\hook_init\D3D9HookInit.cpp">
       <Filter>Source Files\hook_init</Filter>
     </ClCompile>
-    <ClCompile Include="src\hook_init\D3D9DeviceCreate.cpp">
+    <ClCompile Include="src\hook_init\D3D9CreateDevice.cpp">
       <Filter>Source Files\hook_init</Filter>
     </ClCompile>
   </ItemGroup>
