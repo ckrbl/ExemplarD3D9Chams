@@ -25,8 +25,7 @@ jobs:
 
     strategy:
       matrix:
-        arch: [x64]
-        #arch: [x86, x64]
+        arch: [x86, x64]
 
     steps:
     - uses: actions/checkout@v3
