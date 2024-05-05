@@ -15,7 +15,6 @@ env:
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
   DXSDK_DIR: $HOME/cache/
-  PROCESSOR_ARCHITECTURE: x64
 
 permissions:
   contents: read
@@ -26,7 +25,7 @@ jobs:
 
     strategy:
       matrix:
-        arch: [x86]
+        arch: [x64]
         #arch: [x86, x64]
 
     steps:
@@ -54,6 +53,8 @@ jobs:
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
+      with:
+        msbuild-architecture: x64
 
     - name: Add Nmake to PATH
       uses: ilammy/msvc-dev-cmd@v1
@@ -66,11 +67,7 @@ jobs:
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: |
-            VsDevCmd.bat -host_arch=${{matrix.arch}} -arch=${{matrix.arch}}
-            set PROCESSOR_ARCHITECTURE=${{matrix.arch}}
-            echo %PROCESSOR_ARCHITECTURE%
-            msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=${{matrix.arch}} /p:DXSDK_DIR=${{env.DXSDK_DIR}} ExemplarD3D9Chams.sln
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=${{matrix.arch}} /p:DXSDK_DIR=${{env.DXSDK_DIR}} ExemplarD3D9Chams.sln
 
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v4
