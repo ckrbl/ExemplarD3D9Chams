@@ -1,4 +1,4 @@
-#include "D3D9HookInit.hpp"
+#include "D3D9InitHook.hpp"
 
 #include <D3dx9core.h>
 #include <windows.h>
