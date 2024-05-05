@@ -17,6 +17,13 @@ typedef struct ShaderAndBuffer
     ID3DXBuffer* dxBuffer;
 } ShaderAndBuffer;
 
+extern IDirect3DDevice9* g_pGameDevice;
+extern ULONG g_ulMyAllocatedObjectsCount;
+extern bool g_bShutdownStarted;
+void PreShutdown();
+inline void PreReset();
+inline void PostReset(LPDIRECT3DDEVICE9 pDevice);
+
 typedef ULONG(WINAPI* tAddRef)(LPDIRECT3DDEVICE9 pDevice);
 typedef ULONG(WINAPI* tRelease)(LPDIRECT3DDEVICE9 pDevice);
 typedef HRESULT(WINAPI* tReset)(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters);
@@ -32,13 +39,6 @@ extern tReset oReset;
 extern tEndScene oEndScene;
 extern tDrawIndexedPrimitive oDrawIndexedPrimitive;
 extern tSetStreamSource oSetStreamSource;
-
-extern IDirect3DDevice9* g_pGameDevice;
-extern ULONG g_ulMyAllocatedObjectsCount;
-extern bool g_bShutdownStarted;
-void PreShutdown();
-inline void PreReset();
-inline void PostReset(LPDIRECT3DDEVICE9 pDevice);
 
 ULONG WINAPI xAddRef(LPDIRECT3DDEVICE9 pDevice);
 ULONG WINAPI xRelease(LPDIRECT3DDEVICE9 pDevice);
