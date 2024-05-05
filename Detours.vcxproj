@@ -77,6 +77,8 @@
     </NMakeOutput>
     <NMakePreprocessorDefinitions>_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeCleanCommandLine>cd $(ProjectDir)detours\src &amp;&amp; nmake /nologo realclean</NMakeCleanCommandLine>
+    <IntDir>$(Configuration)\$(PlatformTarget)</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeBuildCommandLine>cd $(ProjectDir)detours\src &amp;&amp; nmake /nologo</NMakeBuildCommandLine>
@@ -91,6 +93,8 @@
     </NMakeOutput>
     <NMakePreprocessorDefinitions>NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeCleanCommandLine>cd $(ProjectDir)detours\src &amp;&amp; nmake /nologo realclean</NMakeCleanCommandLine>
+    <IntDir>$(Configuration)\$(PlatformTarget)</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>

@@ -14,7 +14,6 @@ env:
   # You can convert this to a build matrix if you need coverage of multiple configuration types.
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
-  BUILD_PLATFORM: x86
   DXSDK_DIR: $HOME/cache/
 
 permissions:
@@ -23,6 +22,10 @@ permissions:
 jobs:
   build:
     runs-on: windows-latest
+
+    strategy:
+      matrix:
+        arch: [x86, x64]
 
     steps:
     - uses: actions/checkout@v3
@@ -42,16 +45,20 @@ jobs:
              curl -L https://download.microsoft.com/download/a/e/7/ae743f1f-632b-4809-87a9-aa1bb3458e31/DXSDK_Jun10.exe -o _DX2010_.exe
              7z x _DX2010_.exe DXSDK/Include -o_DX2010_
              7z x _DX2010_.exe DXSDK/Lib/x86 -o_DX2010_
+             7z x _DX2010_.exe DXSDK/Lib/x64 -o_DX2010_
              mv _DX2010_/DXSDK $HOME/cache
              rm -fR _DX*_ _DX*_.exe
-             ls -la $HOME/cache
       shell: bash
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
+      with:
+        msbuild-architecture: x64
 
     - name: Add Nmake to PATH
       uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: ${{matrix.arch}}
 
     - name: Restore NuGet packages
       working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -59,11 +66,11 @@ jobs:
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=${{env.BUILD_PLATFORM}} /p:DXSDK_DIR=${{env.DXSDK_DIR}} ExemplarD3D9Chams.vcxproj
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=${{matrix.arch}} /p:DXSDK_DIR=${{env.DXSDK_DIR}} ExemplarD3D9Chams.sln
 
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v4
       with:
-        name: my-artifact
-        path: Release\ExemplarD3D9Chams.dll
+        name: ExemplarD3D9Chams${{matrix.arch}}.dll
+        path: Release\ExemplarD3D9Chams${{matrix.arch}}.dll
         retention-days: 5
