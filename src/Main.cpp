@@ -20,7 +20,6 @@ DWORD WINAPI Init(LPVOID lpThreadParameter)
     return 0;
 }
 
-
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
 {
     HANDLE hThread;
