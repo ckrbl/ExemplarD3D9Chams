@@ -13,15 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\hook_init">
+      <UniqueIdentifier>{fbbcae39-8625-4bc1-b2ba-bd5e36459f8c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\D3DDeviceCreate.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\D3D9HookInit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\D3D9Chams.cpp">
@@ -30,12 +27,18 @@
     <ClCompile Include="src\D3D9RefTracking.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\hook_init\D3D9HookInit.cpp">
+      <Filter>Source Files\hook_init</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hook_init\D3D9DeviceCreate.cpp">
+      <Filter>Source Files\hook_init</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\D3D9Hook.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\D3DDeviceCreate.hpp">
+    <ClInclude Include="include\D3D9HookInit.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

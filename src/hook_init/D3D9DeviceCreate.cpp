@@ -1,14 +1,17 @@
-#include "D3DDeviceCreate.hpp"
+#include "D3D9HookInit.hpp"
 
 #include <D3dx9core.h>
 #include <windows.h>
+
+#pragma comment(lib, "d3d9.lib")
+#pragma comment(lib, "d3dx9.lib")
 
 LRESULT CALLBACK MsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-static inline bool CreateDeviceD3DCopyTable(HWND hWnd, void** pTable, size_t tableSize)
+static inline bool CreateDeviceCopyVTable(HWND hWnd, void** pTable, size_t tableSize)
 {
     bool bRet = false;
     IDirect3DDevice9* pDummyDevice = nullptr;
@@ -44,7 +47,7 @@ exit:
     return bRet;
 }
 
-bool GetD3D9Device(void** pTable, size_t tableSize)
+bool CreateD3D9Device(void** pTable, size_t tableSize)
 {
     bool bRet = false;
     HWND hWnd = NULL;
@@ -75,7 +78,7 @@ bool GetD3D9Device(void** pTable, size_t tableSize)
         goto cleanup_register_class;
     }
 
-    if (!CreateDeviceD3DCopyTable(hWnd, pTable, tableSize))
+    if (!CreateDeviceCopyVTable(hWnd, pTable, tableSize))
     {
         // Message printed in CreateDeviceD3DCopyTable
         goto cleanup_destroy_window;
