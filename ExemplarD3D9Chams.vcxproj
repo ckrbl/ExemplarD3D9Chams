@@ -148,9 +148,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\D3D9Chams.cpp" />
-    <ClCompile Include="src\D3D9RefTracking.cpp" />
-    <ClCompile Include="src\hook_init\D3D9CreateDevice.cpp" />
-    <ClCompile Include="src\hook_init\D3D9HookInit.cpp" />
+    <ClCompile Include="src\D3D9TrackRefs.cpp" />
+    <ClCompile Include="src\init_hook\D3D9CreateDevice.cpp" />
+    <ClCompile Include="src\init_hook\D3D9InitHook.cpp" />
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -160,7 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\D3D9Hook.hpp" />
-    <ClInclude Include="include\D3D9HookInit.hpp" />
+    <ClInclude Include="include\D3D9InitHook.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

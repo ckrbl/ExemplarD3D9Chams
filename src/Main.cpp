@@ -1,6 +1,6 @@
 #include <windows.h>
 
-#include "D3D9HookInit.hpp"
+#include "D3D9InitHook.hpp"
 
 DWORD WINAPI Init(LPVOID lpThreadParameter)
 {
