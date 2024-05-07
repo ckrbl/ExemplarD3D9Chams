@@ -2,6 +2,30 @@
 
 #include "D3D9InitHook.hpp"
 
+BOOL CALLBACK EnumWindowsCb(HWND hwnd, LPARAM lParam)
+{
+    DWORD windowPid;
+    HWND* destHwnd = (HWND*)lParam;
+    if (!IsWindowVisible(hwnd))
+    {
+        return TRUE;  // continue
+    }
+
+    GetWindowThreadProcessId(hwnd, &windowPid);
+    if (windowPid != GetCurrentProcessId())
+    {
+        return TRUE;
+    }
+
+    *destHwnd = hwnd;
+    MessageBox(nullptr, "Found window of game", nullptr, MB_OK);
+    char cname[MAX_PATH];
+    GetWindowTextA(hwnd, (LPSTR)cname, sizeof(cname));
+    MessageBox(nullptr, cname, nullptr, MB_OK);
+    return FALSE;
+}
+
+
 DWORD WINAPI Init(LPVOID lpThreadParameter)
 {
     void* d3d9Device[D3D9_VTABLE_SIZE];
@@ -16,6 +40,11 @@ DWORD WINAPI Init(LPVOID lpThreadParameter)
         MessageBox(nullptr, "InitD3D9Hook failed", nullptr, MB_OK);
         return -1;
     }
+
+    HWND mainWindowHwnd = NULL;
+    EnumWindows(EnumWindowsCb, (LPARAM)&mainWindowHwnd);
+
+    InitImgui(mainWindowHwnd);
 
     return 0;
 }
