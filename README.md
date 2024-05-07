@@ -5,8 +5,6 @@
 
 Simple DirectX 9 chameleon skins cheat for pc games
 
-Currently only 32-bit x86 is supported.
-
 ## Usage Example
 
 ![Example DirectX 9 Game](./example/example.png)
