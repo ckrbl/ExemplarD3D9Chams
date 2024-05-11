@@ -153,3 +153,11 @@ HRESULT WINAPI xSetStreamSource(LPDIRECT3DDEVICE9 pDevice, UINT StreamNumber, ID
 
     return oSetStreamSource(pDevice, StreamNumber, pStreamData, OffsetInBytes, Stride);
 }
+
+HRESULT WINAPI xReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters)
+{
+    PreReset();
+    HRESULT hrReset = oReset(pDevice, pPresentationParameters);
+    PostReset(pDevice);
+    return hrReset;
+}
