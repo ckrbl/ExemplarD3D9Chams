@@ -47,11 +47,3 @@ ULONG WINAPI xRelease(LPDIRECT3DDEVICE9 pDevice)
 
     RECORD_REFCOUNT_AND_RETURN_IT(oRelease);
 }
-
-HRESULT WINAPI xReset(LPDIRECT3DDEVICE9 pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters)
-{
-    PreReset();
-    HRESULT hrReset = oReset(pDevice, pPresentationParameters);
-    PostReset(pDevice);
-    return hrReset;
-}
