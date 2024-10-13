@@ -64,6 +64,8 @@ exit:
 #undef DRAW_INDEXED_PRIMITIVE_VTABLE_IDX
 #undef ENDSCENE_VTABLE_IDX
 #undef RESET_VTABLE_IDX
+#undef RELEASE_VTABLE_IDX
+#undef ADDREF_VTABLE_IDX
 }
 
 bool ShutdownD3D9Hook()
@@ -97,6 +99,7 @@ exit:
     return status;
 }
 
+#undef DETOUR_DETACH
 #undef DETOUR_ATTACH
 #undef CHECK_ERROR
 #undef STRINGIFY
